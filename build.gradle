@@ -1,0 +1,59 @@
+/* ************************* *
+ * Gradle Plugin Definitions *
+ * ************************* */
+plugins {
+	id 'java'
+	id 'eclipse' 
+}
+
+Properties props = new Properties()
+props.load(new FileInputStream("${projectDir}/src/main/resources/version.properties"))
+def version = props.get('appVersion')
+
+/* ******************************** *
+ * The definition of source folders *
+ * ******************************** */
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+        }
+        resources {
+            srcDir 'src/main/resources'
+        }
+    }
+}
+
+/* ************************************ *
+ * Repository information goes below... *
+ * ************************************ */
+repositories {
+	mavenCentral()
+}
+
+/* ************************************ *
+ * Dependency information goes below... *
+ * ************************************ */
+dependencies {
+	
+ 	testCompile group: 'junit', name: 'junit', version: '4.+'
+}
+
+/* ***************************************************************** *
+ * Defines the build parameters specific to the building of the JAR. *
+ * ***************************************************************** */
+jar {
+	archiveName = "PortTester.jar"
+    
+    	manifest { 
+        	attributes('Implementation-Title': 'PortTester', 
+        			'Implementation-Version': version,
+        			"Main-Class": 'com.firebirdcss.tools.port_tester.ApplicationMain')
+    	}
+    
+	from { 
+    		configurations.compile.collect { 
+    		it.isDirectory() ? it : zipTree(it) 
+    	} 
+    }
+}
